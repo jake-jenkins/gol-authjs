@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { OAuthConfig } from "next-auth/providers";
 import { setCookie, getCookie } from "cookies-next";
 import { v4 as uuidv4 } from 'uuid';
 
 // issue, we cannot pass in request object to the provider
+// cannot use node:crypto in edge runtime
+// oidc pluggin seems to have errors
 
 export interface GovUkSignInProfile extends Record<string, any> {
   sub: string;
@@ -65,7 +68,7 @@ export default function GOVUKOneLoginProvider<P extends GovUkSignInProfile>(
       token_endpoint_auth_signing_alg: "PS256",
       id_token_signed_response_alg: "ES256"
     },
-    // @ts-ignore
+    // @ts-expect-error expected from rfc
     jwks: { keys: [options.clientPrivateKey] },
   };
 }
